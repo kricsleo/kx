@@ -1,4 +1,8 @@
 import { moon } from 'cli-spinners'
+// 'node:readline/promises' is supportted from NodeJS 17.4.0
+// import { createInterface } from 'node:readline/promises'
+import { createInterface } from 'node:readline'
+import Fuse from 'fuse.js'
 
 interface SpinnerOptions {
   animation: { 
@@ -61,14 +65,37 @@ export class Spinner {
     this.isCursorHidden = false
   }
 }
-
 // const spinner = new Spinner()
-
 // spinner.start('hello')
-
 // setTimeout(() => {
 //   spinner.start('Got!')
 //   setTimeout(() => {
 //     spinner.stop()
 //   }, 3000)
 // }, 3000)
+
+async function question(question: string, options: string[]) {
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    completer,
+  })
+  const fuse = new Fuse(options)
+
+  function completer(linePartial: string) {
+    const matches = fuse.search(linePartial)
+    const completions = matches.length 
+      ? matches.map(match => match.item)
+      : options
+    return [completions, linePartial]
+  }
+  return new Promise((rs, rj) => {
+    rl.question(question, answer => {
+      rl.close()
+      rs(answer)
+    })
+  })
+}
+// question('What is your name?', ['json', 'kitty', 'bython'])
+//   .then(answer => console.log('Your answer:', answer))
+
