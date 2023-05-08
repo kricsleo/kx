@@ -35,7 +35,7 @@ export class Spinner {
       clearTimeout(this.timer)
     }
     const animationFrame = this.animation.frames[this.animationIdx % this.animation.frames.length]
-    const frame = animationFrame + this.text || '' + '\n'
+    const frame = '\n' + animationFrame + this.text || '' + '\n'
     // TODO: process.stderr usage
     this.stream.cursorTo(0)
     this.stream.write(frame)
