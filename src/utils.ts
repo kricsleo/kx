@@ -1,31 +1,56 @@
-import { dots } from 'cli-spinners'
+import { dots, weather } from 'cli-spinners'
 
+interface SpinnerOptions {
+  animation: { 
+    interval: number,
+    frames: string[]
+  }
+}
 export class Spinner {
-  private frames = dots.frames
-  private interval = dots.interval
-  private frameIdx = 0
+  private animation: SpinnerOptions['animation']
+  private animationIdx = 0
   private timer: NodeJS.Timeout | null = null
+  private stream = process.stderr
+  constructor(options?: SpinnerOptions) {
+    this.animation = options?.animation || dots
+  }
   start(text?: string) {
     if(this.timer) {
       return
     }
+    this.hideCursor()
     this.animate()
   }
   stop() {
     if(this.timer) {
       clearTimeout(this.timer)
     }
+    this.showCursor()
   }
-  animate() {
-    const frame = this.frames[this.frameIdx % this.frames.length]
+  private animate() {
+    const frame = this.animation.frames[this.animationIdx % this.animation.frames.length]
     // TODO: process.stderr usage
-    process.stderr.cursorTo(0)
-    process.stderr.write(frame)
-    this.frameIdx ++
-    this.timer = setTimeout(() => this.animate(), this.interval)
+    this.stream.cursorTo(0)
+    this.stream.write(frame)
+    this.animationIdx ++
+    this.timer = setTimeout(() => this.animate(), this.animation.interval)
+  }
+  showCursor() {
+    // If the stream is connected to a TTY (terminal) device.
+    if(!this.stream.isTTY) {
+      return
+    }
+    this.stream.write('\u001B[?25h')
+  }
+  hideCursor() {
+    // If the stream is connected to a TTY (terminal) device.
+    if(!this.stream.isTTY) {
+      return
+    }
+    this.stream.write('\u001B[?25l')
   }
 }
 
-const spinner = new Spinner()
+const spinner = new Spinner({ animation: weather })
 
 spinner.start()
