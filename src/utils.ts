@@ -3,6 +3,7 @@ import { moon } from 'cli-spinners'
 // import { createInterface } from 'node:readline/promises'
 import { createInterface } from 'node:readline'
 import Fuse from 'fuse.js'
+import chalk from 'chalk'
 
 interface SpinnerOptions {
   animation: { 
@@ -99,3 +100,16 @@ async function question(question: string, options: string[]) {
 // question('What is your name?', ['json', 'kitty', 'bython'])
 //   .then(answer => console.log('Your answer:', answer))
 
+
+function getExecutingFilepath() {
+  // Using Error stack
+  // const from = new Error().stack!.split(/^\s*at\s/m)[2].trim()
+  const lines = new Error().stack!.split(/\n/m)
+  const from = lines[0].match(/(^.*)(?=:\d+$)/)
+  if(!from) {
+    throw new Error('Parsing filepath error')
+  }
+  return from[0]
+}
+
+console.log(chalk.yellow('Your are working at:'), getExecutingFilepath())
