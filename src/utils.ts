@@ -4,6 +4,7 @@ import { moon } from 'cli-spinners'
 import { createInterface } from 'node:readline'
 import Fuse from 'fuse.js'
 import chalk from 'chalk'
+import { createRequire } from 'node:module'
 
 interface SpinnerOptions {
   animation: { 
@@ -113,3 +114,16 @@ function getExecutingFilepath() {
 }
 
 console.log(chalk.yellow('Your are working at:'), getExecutingFilepath())
+
+
+function myRequire(path: string, relativePath: string) {
+  // import.meta.url 👉🏻 file://<filepath>
+  // why `createRequire` not `import`?
+  // because path for `import` must be static,
+  // but when `zx` is installed in user's computer,
+  // the path for 'package.json' varies from one person to another,
+  // it can't be static.
+  return createRequire(path)(relativePath)
+}
+
+console.log('require tsconfig.json', myRequire(import.meta.url, '../tsconfig.json'))
