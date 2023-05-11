@@ -127,3 +127,19 @@ function myRequire(path: string, relativePath: string) {
 }
 
 console.log('require tsconfig.json', myRequire(import.meta.url, '../tsconfig.json'))
+
+
+async function readContentFromStdin() {
+  if(process.stdin.isTTY) {
+    throw new Error('Is connected to a terminal, can not read from it.')
+  }
+  process.stdin.setEncoding('utf8')
+  let content
+  for await (const chunk of process.stdin) {
+    content += chunk
+  }
+  if(!content) {
+    throw new Error('Empty in')
+  }
+  return content
+}
