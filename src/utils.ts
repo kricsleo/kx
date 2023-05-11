@@ -130,16 +130,21 @@ console.log('require tsconfig.json', myRequire(import.meta.url, '../tsconfig.jso
 
 
 async function readContentFromStdin() {
+  // process.stdin.isTTY 是一个属性，用于表示 Node.js 进程的标准输入（stdin）是否连接到终端或控制台。在 Node.js 中，process.stdin 是一个可读流，它提供了从标准输入读取数据的功能。
+  // 当 process.stdin.isTTY 的值为 true 时，这意味着标准输入流（stdin）连接到了一个终端（TTY）或控制台。这通常表示应用程序在交互模式下运行，允许用户直接输入数据。
+  // 当 process.stdin.isTTY 的值为 false 或 undefined 时，这意味着标准输入流（stdin）没有连接到一个终端或控制台，可能是由于数据从文件或其他程序中传输。这通常表示应用程序在非交互模式下运行，从其他来源接收数据，而不是直接从用户那里获取。
   if(process.stdin.isTTY) {
     throw new Error('Is connected to a terminal, can not read from it.')
   }
+  //   process.stdin.setEncoding('utf8') 是一个 Node.js 方法，用于设置进程的标准输入流（stdin）的字符编码。在这个例子中，它将字符编码设置为 'utf8'。
+  // 当设置了字符编码后，从标准输入流（stdin）读取的数据将被解码为字符串，而不是原始的 Buffer 对象。这使得处理输入的文本数据变得更加方便，因为你无需手动将 Buffer 转换为字符串。
   process.stdin.setEncoding('utf8')
   let content
   for await (const chunk of process.stdin) {
     content += chunk
   }
   if(!content) {
-    throw new Error('Empty in')
+    throw new Error('Empty read in.')
   }
   return content
 }
