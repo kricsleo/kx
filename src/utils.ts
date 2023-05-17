@@ -102,24 +102,6 @@ async function question(question: string, options: string[]) {
 // question('What is your name?', ['json', 'kitty', 'bython'])
 //   .then(answer => console.log('Your answer:', answer))
 
-function startRepl() {
-  // Stands from `Read-Eval-Print-Loop`
-  // Read：这一步将读取用户输入的数据，解析成JavaScript数据结构，然后存储在内存中。
-  // Eval：这一步取出存储的数据，对其进行求值。
-  // Print：接着，输出结果。
-  // Loop：重复上述过程，直到用户退出REPL环境。
-
-  // start an interactive terminal to read from user input(or other read in)
-  // eval the code 
-  // return the result to user terminal(or other ouput)
-  const r = repl.start({
-    prompt: chalk.bold.yellow('Enter your code') + ': ',
-    useGlobal: true,
-    preview: true,
-  })
-}
-startRepl()
-
 function getExecutingFilepath() {
   // Using Error stack
   // const from = new Error().stack!.split(/^\s*at\s/m)[2].trim()
@@ -164,3 +146,40 @@ async function readContentFromStdin() {
   }
   return content
 }
+
+function startRepl() {
+  // Stands from `Read-Eval-Print-Loop`
+  // Read：这一步将读取用户输入的数据，解析成JavaScript数据结构，然后存储在内存中。
+  // Eval：这一步取出存储的数据，对其进行求值。
+  // Print：接着，输出结果。
+  // Loop：重复上述过程，直到用户退出REPL环境。
+
+  // start an interactive terminal to read from user input(or other read in)
+  // eval the code 
+  // return the result to user terminal(or other ouput)
+  const r = repl.start({
+    prompt: chalk.bold.yellow('Enter your code') + ': ',
+    useGlobal: true,
+    preview: true,
+  })
+}
+// startRepl()
+
+
+class MyPromise<Value> extends Promise<Value> {
+  then<R, E>(
+    resolve?: ((v: Value) => R | PromiseLike<R>) | null | undefined, 
+    reject?: ((e: E) => E| PromiseLike<E>) | null | undefined
+  ) {
+    console.log('myPromise then')
+    return super.then(resolve, reject)
+  }
+}
+
+const c = new MyPromise((rs, rj) => {
+  setTimeout(() => rs('hi'), 1000)
+});
+
+(async () => {
+  await c
+})()
