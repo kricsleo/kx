@@ -5,6 +5,7 @@ import { createInterface } from 'node:readline'
 import Fuse from 'fuse.js'
 import chalk from 'chalk'
 import { createRequire } from 'node:module'
+import repl from 'node:repl'
 
 interface SpinnerOptions {
   animation: { 
@@ -101,6 +102,23 @@ async function question(question: string, options: string[]) {
 // question('What is your name?', ['json', 'kitty', 'bython'])
 //   .then(answer => console.log('Your answer:', answer))
 
+function startRepl() {
+  // Stands from `Read-Eval-Print-Loop`
+  // Read：这一步将读取用户输入的数据，解析成JavaScript数据结构，然后存储在内存中。
+  // Eval：这一步取出存储的数据，对其进行求值。
+  // Print：接着，输出结果。
+  // Loop：重复上述过程，直到用户退出REPL环境。
+
+  // start an interactive terminal to read from user input(or other read in)
+  // eval the code 
+  // return the result to user terminal(or other ouput)
+  const r = repl.start({
+    prompt: chalk.bold.yellow('Enter your code') + ': ',
+    useGlobal: true,
+    preview: true,
+  })
+}
+startRepl()
 
 function getExecutingFilepath() {
   // Using Error stack
@@ -112,8 +130,7 @@ function getExecutingFilepath() {
   }
   return from[0]
 }
-
-console.log(chalk.yellow('Your are working at:'), getExecutingFilepath())
+// console.log(chalk.yellow('Your are working at:'), getExecutingFilepath())
 
 
 function myRequire(path: string, relativePath: string) {
@@ -125,8 +142,7 @@ function myRequire(path: string, relativePath: string) {
   // it can't be static.
   return createRequire(path)(relativePath)
 }
-
-console.log('require tsconfig.json', myRequire(import.meta.url, '../tsconfig.json'))
+// console.log('require tsconfig.json', myRequire(import.meta.url, '../tsconfig.json'))
 
 
 async function readContentFromStdin() {
