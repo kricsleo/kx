@@ -182,13 +182,13 @@ class MyPromise<Value> extends Promise<Value> {
   }
 }
 
-const c = new MyPromise((rs, rj) => {
-  setTimeout(() => {
-    c.stop()
-  }, 1000)
-});
+// const c = new MyPromise((rs, rj) => {
+//   setTimeout(() => {
+//     c.stop()
+//   }, 1000)
+// });
 
-(async () => {
-  c.stop()
-  await c
-})()
+// (async () => {
+//   c.stop()
+//   await c
+// })()
