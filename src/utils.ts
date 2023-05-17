@@ -167,19 +167,28 @@ function startRepl() {
 
 
 class MyPromise<Value> extends Promise<Value> {
+  private stopped = false
   then<R, E>(
     resolve?: ((v: Value) => R | PromiseLike<R>) | null | undefined, 
     reject?: ((e: E) => E| PromiseLike<E>) | null | undefined
   ) {
-    console.log('myPromise then')
+    if(this.stopped) {
+      throw new Error('Stopped')
+    }
     return super.then(resolve, reject)
+  }
+  stop() {
+    this.stopped = true
   }
 }
 
 const c = new MyPromise((rs, rj) => {
-  setTimeout(() => rs('hi'), 1000)
+  setTimeout(() => {
+    c.stop()
+  }, 1000)
 });
 
 (async () => {
+  c.stop()
   await c
 })()
